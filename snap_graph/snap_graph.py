@@ -259,7 +259,8 @@ class SnapGraph:
         for var in variable_list:
             variable = SubElement(variables, "variable")
             self._set_parameter(variable, "name", var["name"])
-            self._set_parameter(variable, "expression", var["expression"])
+            self._set_parameter(variable, "expr", var["expr"])
+            self._set_parameter(variable, "validExpr", var["validExpr"])
         self._set_parameter(parameters, "region", region)
         self._set_parameter(parameters, "startDateTime", start_date_time)
         self._set_parameter(parameters, "periodDuration", period_duration)
