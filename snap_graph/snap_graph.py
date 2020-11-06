@@ -164,6 +164,20 @@ class SnapGraph:
         self.graph.append(node)
         return node_id
 
+    def land_sea_mask_op(self, source_product, source_bands, land_mask=False, use_srtm=True,
+                         geometry="", invert_geometry=False, shoreline_extension=0):
+
+        node_id, node, parameters = self._set_node_boilerplate("Land-Sea-Mask", source_product)
+        self._set_parameter(parameters, "sourceBands", source_bands)
+        self._set_parameter(parameters, "landMask", land_mask)
+        self._set_parameter(parameters, "useSRTM", use_srtm)
+        self._set_parameter(parameters, "geometry", geometry)
+        self._set_parameter(parameters, "invertGeometry", invert_geometry)
+        self._set_parameter(parameters, "shorelineExtension", shoreline_extension)
+
+        self.graph.append(node)
+        return node_id
+
     def mosaic_op(self, source_product_list, variable_list, condition_list, combine="OR",
                   crs="EPSG:4326", orthorectify=False, elevation_model_name="ACE30",
                   resampling="Nearest", west_bound=-15.0, north_bound=75.0, east_bound=30.0,
