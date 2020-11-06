@@ -83,46 +83,13 @@ class SnapGraph:
         self.graph.append(node)
         return node_id
 
-    def biophysical_op(self, source_product, compute_lai=False, compute_fapar=False,
-                       compute_fcover=False, compute_cab=False, compute_cw=False):
-
-        node_id, node, parameters = self._set_node_boilerplate("BiophysicalOp", source_product)
-        self._set_parameter(parameters, "computeLAI", compute_lai)
-        self._set_parameter(parameters, "computeFapar", compute_fapar)
-        self._set_parameter(parameters, "computeFcover", compute_fcover)
-        self._set_parameter(parameters, "computeCab", compute_cab)
-        self._set_parameter(parameters, "computeCw", compute_cw)
-
-        self.graph.append(node)
-        return node_id
-
-    def resample_op(self, source_product, target_resolution=None, upsampling="Nearest",
-                    downsampling="First", flag_downsampling="First",
-                    resample_on_pyramid_level=False, reference_band=None, target_width=None,
-                    target_height=None):
-
-        node_id, node, parameters = self._set_node_boilerplate("Resample", source_product)
-        self._set_parameter(parameters, "referenceBand", reference_band)
-        self._set_parameter(parameters, "targetWidth", target_width)
-        self._set_parameter(parameters, "targetHeight", target_height)
-        self._set_parameter(parameters, "targetResolution", target_resolution)
-        self._set_parameter(parameters, "upsampling", upsampling)
-        self._set_parameter(parameters, "downsampling", downsampling)
-        self._set_parameter(parameters, "flagDownsampling", flag_downsampling)
-        self._set_parameter(parameters, "resampleOnPyramidLevels", resample_on_pyramid_level)
-
-        self.graph.append(node)
-        return node_id
-
-    def s2_resampling_op(self, source_product, resolution=60, upsampling="Bilinear",
-                         downsampling="Mean", flag_downsampling="First",
-                         resample_on_pyramid_level=False):
-        node_id, node, parameters = self._set_node_boilerplate("S2Resampling", source_product)
-        self._set_parameter(parameters, "resolution", resolution)
-        self._set_parameter(parameters, "upsampling", upsampling)
-        self._set_parameter(parameters, "downsampling", downsampling)
-        self._set_parameter(parameters, "flagDownsampling", flag_downsampling)
-        self._set_parameter(parameters, "resampleOnPyramidLevels", resample_on_pyramid_level)
+    def add_elevation_op(self, source_product, dem_name="SRTM 3Sec",
+                         dem_resampling_method="BICUBIC_INTERPOLATION",
+                         elevation_band_name="elevation"):
+        node_id, node, parameters = self._set_node_boilerplate("AddElevation", source_product)
+        self._set_parameter(parameters, "demName", dem_name)
+        self._set_parameter(parameters, "demResamplingMethod", dem_resampling_method)
+        self._set_parameter(parameters, "elevationBandName", elevation_band_name)
 
         self.graph.append(node)
         return node_id
@@ -139,104 +106,6 @@ class SnapGraph:
         self._set_parameter(target_band, "description", description)
         self._set_parameter(target_band, "unit", unit)
         self._set_parameter(target_band, "noDataValue", no_data_value)
-
-        self.graph.append(node)
-        return node_id
-
-    def reproject_op(self, source_product, crs, resampling="Nearest", no_data_value="NaN",
-                     wkt_file=None, reference_pixel_x=None, reference_pixel_y=None, easting=None,
-                     northing=None, orientation=None, pixel_size_x=None, pixel_size_y=None,
-                     width=None, height=None, tile_size_x=None, tile_size_y=None,
-                     orthorectify=False, elevation_model_name=None, include_tie_point_grids=True,
-                     add_delta_bands=False):
-
-        node_id, node, parameters = self._set_node_boilerplate("Reproject", source_product)
-        self._set_parameter(parameters, "wktFile", wkt_file)
-        self._set_parameter(parameters, "crs", crs)
-        self._set_parameter(parameters, "resampling", resampling)
-        self._set_parameter(parameters, "referencePixelX", reference_pixel_x)
-        self._set_parameter(parameters, "referencePixelY", reference_pixel_y)
-        self._set_parameter(parameters, "easting", easting)
-        self._set_parameter(parameters, "northing", northing)
-        self._set_parameter(parameters, "orientation", orientation)
-        self._set_parameter(parameters, "pixelSizeX", pixel_size_x)
-        self._set_parameter(parameters, "pixelSizeY", pixel_size_y)
-        self._set_parameter(parameters, "width", width)
-        self._set_parameter(parameters, "height", height)
-        self._set_parameter(parameters, "tileSizeX", tile_size_x)
-        self._set_parameter(parameters, "tileSizeY", tile_size_y)
-        self._set_parameter(parameters, "orthorectify", orthorectify)
-        self._set_parameter(parameters, "elevationModelName", elevation_model_name)
-        self._set_parameter(parameters, "noDataValue", no_data_value)
-        self._set_parameter(parameters, "includeTiePointGrids", include_tie_point_grids)
-        self._set_parameter(parameters, "addDeltaBands", add_delta_bands)
-
-        self.graph.append(node)
-        return node_id
-
-    def subset_op(self, source_product, source_bands, region=None, geo_region=None,
-                  sub_sampling_x=1, sub_sampling_y=1, full_swath=False, tie_point_grid_names=None,
-                  copy_metadata=False):
-
-        node_id, node, parameters = self._set_node_boilerplate("Subset", source_product)
-        self._set_parameter(parameters, "sourceBands", source_bands)
-        self._set_parameter(parameters, "region", region)
-        self._set_parameter(parameters, "geoRegion", geo_region)
-        self._set_parameter(parameters, "subSamplingX", sub_sampling_x)
-        self._set_parameter(parameters, "subSamplingY", sub_sampling_y)
-        self._set_parameter(parameters, "fullSwath", full_swath)
-        self._set_parameter(parameters, "tiePointGridNames", tie_point_grid_names)
-        self._set_parameter(parameters, "copyMetadata", copy_metadata)
-
-        self.graph.append(node)
-        return node_id
-
-    def pdu_stitching_op(self, source_product, source_product_paths, target_dir):
-        node_id, node, parameters = self._set_node_boilerplate("PduStitching", source_product)
-        self._set_parameter(parameters, "sourceProductPaths", source_product_paths)
-        self._set_parameter(parameters, "targetDir", target_dir)
-
-        self.graph.append(node)
-        return node_id
-
-    def add_elevation_op(self, source_product, dem_name="SRTM 3Sec",
-                         dem_resampling_method="BICUBIC_INTERPOLATION",
-                         elevation_band_name="elevation"):
-        node_id, node, parameters = self._set_node_boilerplate("AddElevation", source_product)
-        self._set_parameter(parameters, "demName", dem_name)
-        self._set_parameter(parameters, "demResamplingMethod", dem_resampling_method)
-        self._set_parameter(parameters, "elevationBandName", elevation_band_name)
-
-        self.graph.append(node)
-        return node_id
-
-    def mosaic_op(self, source_product_list, variable_list, condition_list, combine="OR",
-                  crs="EPSG:4326", orthorectify=False, elevation_model_name="ACE30",
-                  resampling="Nearest", west_bound=-15.0, north_bound=75.0, east_bound=30.0,
-                  south_bound=35.0, pixel_size_x=0.05, pixel_size_y=0.05):
-        node_id, node, parameters = self._set_node_boilerplate("Mosaic", source_product_list)
-        variables = SubElement(parameters, "variables")
-        for var in variable_list:
-            variable = SubElement(variables, "variable")
-            self._set_parameter(variable, "name", var["name"])
-            self._set_parameter(variable, "expression", var["expression"])
-        conditions = SubElement(parameters, "conditions")
-        for con in condition_list:
-            condition = SubElement(conditions, "condition")
-            self._set_parameter(condition, "name", con["name"])
-            self._set_parameter(condition, "expression", con["expression"])
-            self._set_parameter(condition, "output", con["output"])
-        self._set_parameter(parameters, "combine", combine)
-        self._set_parameter(parameters, "crs", crs)
-        self._set_parameter(parameters, "orthorectify", orthorectify)
-        self._set_parameter(parameters, "elevationModelName", elevation_model_name)
-        self._set_parameter(parameters, "resampling", resampling)
-        self._set_parameter(parameters, "westBound", west_bound)
-        self._set_parameter(parameters, "northBound", north_bound)
-        self._set_parameter(parameters, "eastBound", east_bound)
-        self._set_parameter(parameters, "southBound", south_bound)
-        self._set_parameter(parameters, "pixelSizeX", pixel_size_x)
-        self._set_parameter(parameters, "pixelSizeY", pixel_size_y)
 
         self.graph.append(node)
         return node_id
@@ -278,6 +147,137 @@ class SnapGraph:
         self._set_parameter(parameters, "metadataPropertiesFile", metadata_properties_file)
         self._set_parameter(parameters, "metadataTemplateDir", metadata_template_dir)
         self._set_parameter(parameters, "metadataAggregatorName", metadata_aggregator_name)
+
+        self.graph.append(node)
+        return node_id
+
+    def biophysical_op(self, source_product, compute_lai=False, compute_fapar=False,
+                       compute_fcover=False, compute_cab=False, compute_cw=False):
+
+        node_id, node, parameters = self._set_node_boilerplate("BiophysicalOp", source_product)
+        self._set_parameter(parameters, "computeLAI", compute_lai)
+        self._set_parameter(parameters, "computeFapar", compute_fapar)
+        self._set_parameter(parameters, "computeFcover", compute_fcover)
+        self._set_parameter(parameters, "computeCab", compute_cab)
+        self._set_parameter(parameters, "computeCw", compute_cw)
+
+        self.graph.append(node)
+        return node_id
+
+    def mosaic_op(self, source_product_list, variable_list, condition_list, combine="OR",
+                  crs="EPSG:4326", orthorectify=False, elevation_model_name="ACE30",
+                  resampling="Nearest", west_bound=-15.0, north_bound=75.0, east_bound=30.0,
+                  south_bound=35.0, pixel_size_x=0.05, pixel_size_y=0.05):
+        node_id, node, parameters = self._set_node_boilerplate("Mosaic", source_product_list)
+        variables = SubElement(parameters, "variables")
+        for var in variable_list:
+            variable = SubElement(variables, "variable")
+            self._set_parameter(variable, "name", var["name"])
+            self._set_parameter(variable, "expression", var["expression"])
+        conditions = SubElement(parameters, "conditions")
+        for con in condition_list:
+            condition = SubElement(conditions, "condition")
+            self._set_parameter(condition, "name", con["name"])
+            self._set_parameter(condition, "expression", con["expression"])
+            self._set_parameter(condition, "output", con["output"])
+        self._set_parameter(parameters, "combine", combine)
+        self._set_parameter(parameters, "crs", crs)
+        self._set_parameter(parameters, "orthorectify", orthorectify)
+        self._set_parameter(parameters, "elevationModelName", elevation_model_name)
+        self._set_parameter(parameters, "resampling", resampling)
+        self._set_parameter(parameters, "westBound", west_bound)
+        self._set_parameter(parameters, "northBound", north_bound)
+        self._set_parameter(parameters, "eastBound", east_bound)
+        self._set_parameter(parameters, "southBound", south_bound)
+        self._set_parameter(parameters, "pixelSizeX", pixel_size_x)
+        self._set_parameter(parameters, "pixelSizeY", pixel_size_y)
+
+        self.graph.append(node)
+        return node_id
+
+    def pdu_stitching_op(self, source_product, source_product_paths, target_dir):
+        node_id, node, parameters = self._set_node_boilerplate("PduStitching", source_product)
+        self._set_parameter(parameters, "sourceProductPaths", source_product_paths)
+        self._set_parameter(parameters, "targetDir", target_dir)
+
+        self.graph.append(node)
+        return node_id
+
+    def reproject_op(self, source_product, crs, resampling="Nearest", no_data_value="NaN",
+                     wkt_file=None, reference_pixel_x=None, reference_pixel_y=None, easting=None,
+                     northing=None, orientation=None, pixel_size_x=None, pixel_size_y=None,
+                     width=None, height=None, tile_size_x=None, tile_size_y=None,
+                     orthorectify=False, elevation_model_name=None, include_tie_point_grids=True,
+                     add_delta_bands=False):
+
+        node_id, node, parameters = self._set_node_boilerplate("Reproject", source_product)
+        self._set_parameter(parameters, "wktFile", wkt_file)
+        self._set_parameter(parameters, "crs", crs)
+        self._set_parameter(parameters, "resampling", resampling)
+        self._set_parameter(parameters, "referencePixelX", reference_pixel_x)
+        self._set_parameter(parameters, "referencePixelY", reference_pixel_y)
+        self._set_parameter(parameters, "easting", easting)
+        self._set_parameter(parameters, "northing", northing)
+        self._set_parameter(parameters, "orientation", orientation)
+        self._set_parameter(parameters, "pixelSizeX", pixel_size_x)
+        self._set_parameter(parameters, "pixelSizeY", pixel_size_y)
+        self._set_parameter(parameters, "width", width)
+        self._set_parameter(parameters, "height", height)
+        self._set_parameter(parameters, "tileSizeX", tile_size_x)
+        self._set_parameter(parameters, "tileSizeY", tile_size_y)
+        self._set_parameter(parameters, "orthorectify", orthorectify)
+        self._set_parameter(parameters, "elevationModelName", elevation_model_name)
+        self._set_parameter(parameters, "noDataValue", no_data_value)
+        self._set_parameter(parameters, "includeTiePointGrids", include_tie_point_grids)
+        self._set_parameter(parameters, "addDeltaBands", add_delta_bands)
+
+        self.graph.append(node)
+        return node_id
+
+    def resample_op(self, source_product, target_resolution=None, upsampling="Nearest",
+                    downsampling="First", flag_downsampling="First",
+                    resample_on_pyramid_level=False, reference_band=None, target_width=None,
+                    target_height=None):
+
+        node_id, node, parameters = self._set_node_boilerplate("Resample", source_product)
+        self._set_parameter(parameters, "referenceBand", reference_band)
+        self._set_parameter(parameters, "targetWidth", target_width)
+        self._set_parameter(parameters, "targetHeight", target_height)
+        self._set_parameter(parameters, "targetResolution", target_resolution)
+        self._set_parameter(parameters, "upsampling", upsampling)
+        self._set_parameter(parameters, "downsampling", downsampling)
+        self._set_parameter(parameters, "flagDownsampling", flag_downsampling)
+        self._set_parameter(parameters, "resampleOnPyramidLevels", resample_on_pyramid_level)
+
+        self.graph.append(node)
+        return node_id
+
+    def s2_resampling_op(self, source_product, resolution=60, upsampling="Bilinear",
+                         downsampling="Mean", flag_downsampling="First",
+                         resample_on_pyramid_level=False):
+        node_id, node, parameters = self._set_node_boilerplate("S2Resampling", source_product)
+        self._set_parameter(parameters, "resolution", resolution)
+        self._set_parameter(parameters, "upsampling", upsampling)
+        self._set_parameter(parameters, "downsampling", downsampling)
+        self._set_parameter(parameters, "flagDownsampling", flag_downsampling)
+        self._set_parameter(parameters, "resampleOnPyramidLevels", resample_on_pyramid_level)
+
+        self.graph.append(node)
+        return node_id
+
+    def subset_op(self, source_product, source_bands, region=None, geo_region=None,
+                  sub_sampling_x=1, sub_sampling_y=1, full_swath=False, tie_point_grid_names=None,
+                  copy_metadata=False):
+
+        node_id, node, parameters = self._set_node_boilerplate("Subset", source_product)
+        self._set_parameter(parameters, "sourceBands", source_bands)
+        self._set_parameter(parameters, "region", region)
+        self._set_parameter(parameters, "geoRegion", geo_region)
+        self._set_parameter(parameters, "subSamplingX", sub_sampling_x)
+        self._set_parameter(parameters, "subSamplingY", sub_sampling_y)
+        self._set_parameter(parameters, "fullSwath", full_swath)
+        self._set_parameter(parameters, "tiePointGridNames", tie_point_grid_names)
+        self._set_parameter(parameters, "copyMetadata", copy_metadata)
 
         self.graph.append(node)
         return node_id
