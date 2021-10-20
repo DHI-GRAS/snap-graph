@@ -86,7 +86,7 @@ class SnapGraph:
     def add_elevation_op(self, source_product, dem_name="SRTM 3Sec",
                          dem_resampling_method="BICUBIC_INTERPOLATION",
                          elevation_band_name="elevation", external_dem_file="",
-                         external_dem_nodata_value=""):
+                         external_dem_nodata_value=0.0):
         node_id, node, parameters = self._set_node_boilerplate("AddElevation", source_product)
         self._set_parameter(parameters, "demName", dem_name)
         self._set_parameter(parameters, "demResamplingMethod", dem_resampling_method)
