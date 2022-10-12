@@ -127,6 +127,8 @@ class SnapGraph:
             self._set_parameter(aggregator, "type", agg["type"])
             self._set_parameter(aggregator, "varName", agg["varName"])
             self._set_parameter(aggregator, "targetName", agg["targetName"])
+            if agg["type"] == 'PERCENTILE':
+                self._set_parameter(aggregator, "percentage", agg["percentage"])
         variables = SubElement(parameters, "variables")
         for var in variable_list:
             variable = SubElement(variables, "variable")
